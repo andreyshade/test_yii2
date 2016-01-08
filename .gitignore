@@ -32,3 +32,5 @@ config/db.php
 config/params.php
 config/test.php
 files/
+
+web/images

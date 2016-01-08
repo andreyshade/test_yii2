@@ -5,12 +5,20 @@ $params = require(__DIR__ . '/params.php');
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
+    'language' => 'ru-RU',
     'bootstrap' => ['log'],
     'components' => [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'WO1ReGJ65072EN3vDhvLRlr11-5Qgzw7',
         ],
+        'urlManager' => [
+			'enablePrettyUrl' => true,
+			'showScriptName' => false,
+			'rules' => [
+				// '/<alias>' => 'site/<alias>'
+			]
+		],
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
@@ -38,6 +46,10 @@ $config = [
             ],
         ],
         'db' => require(__DIR__ . '/db.php'),
+        'formatter' => [
+            'locale' => 'ru-RU',
+            'dateFormat' => 'd MMMM Y',
+        ],
     ],
     'params' => $params,
 ];

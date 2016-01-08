@@ -14,13 +14,15 @@ use Yii;
  * @property string $preview
  * @property string $date
  * @property integer $author_id
+ *
+ * @property Authors $author
  */
 class Books extends \yii\db\ActiveRecord {
 
     const FIELD_ID  = 'id';
-    const FIELD_NAME = 'field_name';
-    const FIELD_DATA_CREATE = 'data_create';
-    const FIELD_DATA_UPDATE = 'data_update';
+    const FIELD_NAME = 'name';
+    const FIELD_DATE_CREATE = 'date_create';
+    const FIELD_DATE_UPDATE = 'date_update';
     const FIELD_PREVIEW = 'preview';
     const FIELD_DATE = 'date';
     const FIELD_AUTHOR_ID = 'author_id';
@@ -35,10 +37,10 @@ class Books extends \yii\db\ActiveRecord {
     public function rules()
     {
         return [
-            [['data_create', 'date_update', 'date'], 'safe'],
-            [['author_id'], 'required'],
-            [['author_id'], 'integer'],
-            [['name', 'preview'], 'string', 'max' => 255]
+            [[self::FIELD_DATE_CREATE, self::FIELD_DATE_UPDATE, self::FIELD_DATE], 'safe'],
+            [[self::FIELD_AUTHOR_ID], 'required'],
+            [[self::FIELD_AUTHOR_ID], 'integer'],
+            [[self::FIELD_NAME, self::FIELD_PREVIEW], 'string', 'max' => 255]
         ];
     }
 
@@ -48,13 +50,18 @@ class Books extends \yii\db\ActiveRecord {
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'name' => 'Name',
-            'data_create' => 'Data Create',
-            'date_update' => 'Date Update',
-            'preview' => 'Preview',
-            'date' => 'Date',
-            'author_id' => 'Author ID',
+            self::FIELD_ID => 'ID',
+            self::FIELD_NAME => 'Name',
+            self::FIELD_DATE_CREATE => 'Data Create',
+            self::FIELD_DATE_UPDATE => 'Date Update',
+            self::FIELD_PREVIEW => 'Preview',
+            self::FIELD_DATE => 'Date',
+            self::FIELD_AUTHOR_ID => 'Author ID',
         ];
+    }
+
+    const RELATION_AUTHOR = 'author';
+    public function getAuthor(){
+        return $this->hasOne(Authors::className(), [Authors::FIELD_ID => self::FIELD_AUTHOR_ID]);
     }
 }
