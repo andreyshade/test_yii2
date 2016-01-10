@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Authors;
 use app\models\Books;
 use Yii;
 use yii\filters\AccessControl;
@@ -94,7 +95,37 @@ class SiteController extends Controller {
         };
 
         $books = new ActiveDataProvider([
-			'query' => $searchModel->search()
+			'query' => $searchModel->search(),
+            'sort' =>[
+                'attributes' => [
+                    BooksSearch::FIELD_ID => [
+                        'asc' => [Books::FIELD_ID => SORT_ASC],
+                        'desc' => [Books::FIELD_ID => SORT_DESC],
+                        'default' => ''
+                    ],
+                    BooksSearch::FIELD_NAME => [
+                        'asc' => [Books::FIELD_NAME => SORT_ASC],
+                        'desc' => [Books::FIELD_NAME => SORT_DESC],
+                        'default' => ''
+                    ],
+                    BooksSearch::FIELD_FULL_AUTHOR_NAME => [
+						'asc' => [Authors::FIELD_FIRSTNAME => SORT_ASC, Authors::FIELD_LASTNAME => SORT_ASC],
+						'desc' => [Authors::FIELD_FIRSTNAME => SORT_DESC, Authors::FIELD_LASTNAME => SORT_DESC],
+						'default' => ''
+					],
+                    BooksSearch::FIELD_DATE => [
+                        'asc' => [Books::FIELD_DATE => SORT_ASC],
+                        'desc' => [Books::FIELD_DATE => SORT_DESC],
+                        'default' => ''
+                    ],
+                    BooksSearch::FIELD_DATE_CREATE => [
+                        'asc' => [Books::FIELD_DATE_CREATE => SORT_ASC],
+                        'desc' => [Books::FIELD_DATE_CREATE => SORT_DESC],
+                        'default' => ''
+                    ]
+
+                ]
+            ]
 		]);
 
         return $this->render('books_list', [

@@ -92,6 +92,7 @@ echo '<div class="alert alert-' . $key . '">' . $message . '</div>';
         ],
         [
             'class' => DataColumn::className(),
+            'attribute' => BooksSearch::FIELD_FULL_AUTHOR_NAME,
             'label' => 'Автор',
             'value' => function($model){
             /* @var $model Books */
@@ -100,6 +101,7 @@ echo '<div class="alert alert-' . $key . '">' . $message . '</div>';
         ],
         [
             'class' => DataColumn::className(),
+            'attribute' => BooksSearch::FIELD_DATE,
             'label' => 'Дата выхода книги',
             'value' => function($model) {
                 /* @var Books $model */
@@ -108,6 +110,7 @@ echo '<div class="alert alert-' . $key . '">' . $message . '</div>';
         ],
         [
             'class' => DataColumn::className(),
+            'attribute' => BooksSearch::FIELD_DATE_CREATE,
             'label' => 'Дата добавления',
             'value' => function($model) {
                 /* @var Books $model */

@@ -19,6 +19,7 @@ class BooksSearch extends Books {
 
     const START_DATE = 'startDate';
     const END_DATE = 'endDate';
+    const FIELD_FULL_AUTHOR_NAME = 'fullAuthorName';
 
 
     public function rules() {
@@ -40,6 +41,7 @@ class BooksSearch extends Books {
 
     public function search() {
         $query = self::find();
+        $query->joinWith(Books::RELATION_AUTHOR);
 
         if ($this->author_id) {
             $query->andFilterWhere(['=', Books::FIELD_AUTHOR_ID, $this->author_id]);
