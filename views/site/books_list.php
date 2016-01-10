@@ -20,12 +20,16 @@ use app\models\Authors;
 ?>
 
 <?php $this->registerJsFile('/js/magnific-popup.js');?>
+<?php $this->registerJsFile('/js/view_book_modal.js');?>
+
 
 <?php
 foreach (Yii::$app->session->getAllFlashes() as $key => $message) {
 echo '<div class="alert alert-' . $key . '">' . $message . '</div>';
 }
 ?>
+
+<div id="modal-result"></div>
 
 
     <?php $form = ActiveForm::begin([
@@ -120,8 +124,23 @@ echo '<div class="alert alert-' . $key . '">' . $message . '</div>';
         [
             'class' => ActionColumn::className(),
             'header' => 'Кнопки действий',
+            'template' => '{edit} {view} {delete}',
             'visible' => !Yii::$app->user->isGuest,
             'buttons' => [
+                'edit' => function($url, $model) {
+                    /* @var Books $model */
+                    return Html::a('<span class="glyphicon glyphicon-pencil" ></span>', [
+                       'edit-book',
+                        Books::FIELD_ID => $model->id,
+                        ], ['target' => '_blank']);
+                },
+                'view' => function($url, $model) {
+                      /* @var Books $model */
+                    return Html::a('<span class="glyphicon glyphicon-eye-open" ></span>', [
+                        'view-book',
+                        Books::FIELD_ID => $model->id
+                    ], ['class' => 'view-details']);
+                },
                 'delete' => function($url, $model) {
                     /* @var Books $model */
                     return Html::a('<span class="glyphicon glyphicon-trash"></span>', [

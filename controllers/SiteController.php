@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\Authors;
 use app\models\Books;
+use app\models\BooksForm;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -133,14 +134,45 @@ class SiteController extends Controller {
            'searchModel' => $searchModel
         ]);
     }
+    public function actionEditBook() {
+        if (Yii::$app->user->isGuest) {
+            throw new \yii\web\HttpException(404);
+        };
+        if (!$book = Books::findOne([Books::FIELD_ID => Yii::$app->request->get(Books::FIELD_ID)])) {
+            $this->redirect('book-list');
+		}
+
+        $model = new BooksForm();
+		$model->initFormModel($book);
+
+		if ($model->load(Yii::$app->request->post()) && $model->save()) {
+			Yii::$app->session->setFlash('success', 'Данные книги успешно обовлены.');
+			return $this->redirect('books-list');
+		}
+
+        return $this->render('book_edit' , [
+            'model' => $model
+        ]);
+    }
+    public function actionViewBook() {
+        if (Yii::$app->user->isGuest) {
+            throw new \yii\web\HttpException(404);
+        };
+        if (!$model = Books::findOne([Books::FIELD_ID => Yii::$app->request->get(Books::FIELD_ID)])) {
+            return false;
+		}
+        return $this->renderPartial('_book_view_modal' , [
+            'model' => $model
+        ]);
+    }
     public function actionDeleteBook() {
         if (Yii::$app->user->isGuest) {
             throw new \yii\web\HttpException(404);
         };
         if ($id = Yii::$app->request->get(Books::FIELD_ID)) {
 			Books::deleteAll([Books::FIELD_ID => $id]);
+            Yii::$app->session->setFlash('success', 'Книга успешно удалена.');
 		}
-        Yii::$app->session->setFlash('success', 'Книга успешно удалена.');
 		return $this->redirect('books-list');
     }
 }
