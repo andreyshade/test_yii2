@@ -4,13 +4,19 @@
  * User: andreyshade
  * Date: 05.01.16
  * Time: 7:13
- * @var $books \app\models\Books
+ * @var $books Books
+ * @var $searchModel BooksSearch
  */
 use yii\grid\GridView;
 use yii\grid\ActionColumn;
 use yii\grid\DataColumn;
 use yii\helpers\Html;
+use yii\helpers\ArrayHelper;
+use yii\widgets\ActiveForm;
+use dosamigos\datepicker\DatePicker;
 use app\models\Books;
+use app\models\BooksSearch;
+use app\models\Authors;
 ?>
 
 <?php $this->registerJsFile('/js/magnific-popup.js');?>
@@ -21,15 +27,48 @@ echo '<div class="alert alert-' . $key . '">' . $message . '</div>';
 }
 ?>
 
-<div class="row">
 
-</div>
+    <?php $form = ActiveForm::begin([
+        'options' => [
+                    'class' => 'form-inline',
+                    'enctype' => 'multipart/form-data'
+                ],
+        'fieldConfig' => ['template' => '{input}']
+        ]); ?>
+        <?= $form->errorSummary($searchModel); ?>
+        <?= $form->field($searchModel, BooksSearch::FIELD_AUTHOR_ID)
+        ->dropDownList(ArrayHelper::map(Authors::find()->all(),  Authors::FIELD_ID, Authors::FULLNAME),
+            ['prompt'=>'автор']) ?>
+        &nbsp;
+        <?= $form->field($searchModel, BooksSearch::FIELD_NAME)->textInput(['placeholder' => 'название книги'])?>
+        <br>
+        <br>
+        Дата выхода книги:&nbsp;
+        <?= $form->field($searchModel, BooksSearch::START_DATE)->widget(DatePicker::className(),[
+            'options' => ['placeholder' => 'дата начала'],
+            'language' => 'ru',
+            'clientOptions' => [
+            'autoclose' => true,
+            'format' => 'dd/mm/yyyy'
+            ]])?>
+        &nbsp;до&nbsp;
+            <?= $form->field($searchModel, BooksSearch::END_DATE)->widget(DatePicker::className(),[
+            'options' => ['placeholder' => 'дата окончания'],
+            'language' => 'ru',
+            'clientOptions' => [
+            'autoclose' => true,
+            'format' => 'dd/mm/yyyy'
+            ]])?>
+        <?= Html::submitButton('Искать', ['class' => 'btn btn-default pull-right']) ?>
+    <?php ActiveForm::end(); ?>
+
+<br>
 
 <?= GridView::widget ([
     'dataProvider' => $books,
     'showOnEmpty' => true,
     'summary' => false,
-    'emptyText' => 'There are no available books',
+    'emptyText' => 'К сожелению, не найдено книг по данному запросу, попробуйте изменить условия поиска',
     'columns' => [
         Books::FIELD_ID,
         [
@@ -63,13 +102,17 @@ echo '<div class="alert alert-' . $key . '">' . $message . '</div>';
             'class' => DataColumn::className(),
             'label' => 'Дата выхода книги',
             'value' => function($model) {
+                /* @var Books $model */
                 return Yii::$app->formatter->asDate($model->date);
             }
         ],
         [
             'class' => DataColumn::className(),
             'label' => 'Дата добавления',
-            'attribute' => Books::FIELD_DATE_CREATE
+            'value' => function($model) {
+                /* @var Books $model */
+                return Yii::$app->formatter->asDate($model->date_create);
+            }
         ],
         [
             'class' => ActionColumn::className(),

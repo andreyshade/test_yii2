@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "authors".
@@ -11,25 +12,23 @@ use Yii;
  * @property string $firstname
  * @property string $lastname
  */
-class Authors extends \yii\db\ActiveRecord
-{
+class Authors extends \yii\db\ActiveRecord {
     const FIELD_ID = 'id';
     const FIELD_FIRSTNAME = 'firstname';
     const FIELD_LASTNAME = 'lastname';
+    const FULLNAME = 'fullName';
 
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'authors';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [[self::FIELD_FIRSTNAME, self::FIELD_LASTNAME], 'string', 'max' => 50]
         ];
@@ -38,8 +37,7 @@ class Authors extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             self::FIELD_ID => 'ID',
             self::FIELD_FIRSTNAME => 'Firstname',
@@ -49,5 +47,9 @@ class Authors extends \yii\db\ActiveRecord
 
     public function getFullName () {
         return $this->firstname . ' ' . $this->lastname;
+    }
+
+    public static function getAuthorsList () {
+        return ArrayHelper::map(Authors::find()->all(),  Authors::FIELD_ID, Authors::FIELD_FIRSTNAME . ' ' . Authors::FIELD_LASTNAME);
     }
 }

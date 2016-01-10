@@ -89,14 +89,17 @@ class SiteController extends Controller {
 
     public function actionBooksList() {
         $searchModel = new BooksSearch();
-		$searchModel->load(Yii::$app->request->get());
+		if ($searchModel->load(Yii::$app->request->post())) {
+            $searchModel->validate();
+        };
 
         $books = new ActiveDataProvider([
 			'query' => $searchModel->search()
 		]);
 
         return $this->render('books_list', [
-           'books' => $books
+           'books' => $books,
+           'searchModel' => $searchModel
         ]);
     }
     public function actionDeleteBook() {

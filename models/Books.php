@@ -9,7 +9,7 @@ use Yii;
  *
  * @property integer $id
  * @property string $name
- * @property string $data_create
+ * @property string $date_create
  * @property string $date_update
  * @property string $preview
  * @property string $date
@@ -38,7 +38,6 @@ class Books extends \yii\db\ActiveRecord {
     {
         return [
             [[self::FIELD_DATE_CREATE, self::FIELD_DATE_UPDATE, self::FIELD_DATE], 'safe'],
-            [[self::FIELD_AUTHOR_ID], 'required'],
             [[self::FIELD_AUTHOR_ID], 'integer'],
             [[self::FIELD_NAME, self::FIELD_PREVIEW], 'string', 'max' => 255]
         ];
