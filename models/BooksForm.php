@@ -10,9 +10,11 @@ namespace app\models;
 
 use Yii;
 use DateTime;
+use Imagine\Gd;
+use Imagine\Image\Box;
+use yii\web\UploadedFile;
 use yii\db\Expression;
 use yii\base\Model;
-use app\models\Books;
 
 class BooksForm extends Model {
     public $id;
@@ -22,6 +24,7 @@ class BooksForm extends Model {
     public $date_create;
     public $date_update;
     public $preview;
+    public $imageSizeLimit = ['width' => 120, 'height' => 120];
 
     const FIELD_ID = 'id';
     const FIELD_AUTHOR_ID = 'author_id';
@@ -34,7 +37,8 @@ class BooksForm extends Model {
 
     public function rules() {
         return [
-            [[self::FIELD_AUTHOR_ID, self::FIELD_NAME, self::FIELD_NAME, self::FIELD_DATE], 'required']
+            [[self::FIELD_AUTHOR_ID, self::FIELD_NAME, self::FIELD_NAME, self::FIELD_DATE], 'required'],
+            [[self::FIELD_PREVIEW], 'file', 'skipOnEmpty' => true,'extensions' => 'png, jpg', 'maxSize' => ini_get('upload_max_filesize')*1024*1024],
         ];
     }
 
@@ -60,13 +64,32 @@ class BooksForm extends Model {
         $this->date_update = $model->date_update;
         $this->preview = $model->preview;
     }
+
     public function save() {
+        $model = Books::findOne($this->id);
+        $fileInstance = UploadedFile::getInstance($this, self::FIELD_PREVIEW);
+        if ($fileInstance) {
+			$filePath = 'images/' . $fileInstance->baseName . '.' . $fileInstance->extension;
+			$model->preview = $fileInstance->baseName . '.' . $fileInstance->extension;
+			$fileInstance->saveAs($filePath,false);
+            $imagine = new Gd\Imagine();
+			try {
+                $filePath = 'images/preview_' . $fileInstance->baseName . '.' . $fileInstance->extension;
+				$img = $imagine->open($fileInstance->tempName);
+				$size = $img->getSize();
+				if ($size->getHeight() > $this->imageSizeLimit['width'] || $size->getWidth() > $this->imageSizeLimit['height']) {
+					$img->resize(new Box($this->imageSizeLimit['width'], $this->imageSizeLimit['height']));
+				}
+				$img->save($filePath);//
+			} catch (\Imagine\Exception\RuntimeException $ex) {
+				$this->addError(self::FIELD_PREVIEW, 'Imagine runtime exception: ' . $ex->getMessage());
+				return FALSE;
+			}
+        }
         if (!$this->validate()) {
 			return false;
 		}
-        $model = Books::findOne($this->id);
         $model->name = $this->name;
-        // TODO image update
         $model->author_id = $this->author_id;
         $model->date = DateTime::createFromFormat('d/m/Y', $this->date)->format( 'Y-m-d' );;
         $model->date_update = new Expression('NOW()');

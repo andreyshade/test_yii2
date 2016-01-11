@@ -35,7 +35,7 @@ echo DetailView::widget([
         [
             'label' => 'Превью',
             'format' => ['image',['width'=>'120']],
-            'value' => $model->preview
+            'value' => '/images/preview_' . $model->preview
         ],
         [
             'label' => 'Автор',

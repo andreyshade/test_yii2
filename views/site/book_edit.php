@@ -30,7 +30,8 @@ use app\models\Authors;
 
         <?= $form->field($model, BooksForm::FIELD_NAME);?>
 
-        <?= $form->field($model, BooksForm::FIELD_PREVIEW);?>
+        <?= $form->field($model, BooksForm::FIELD_PREVIEW)->fileInput();?>
+
 
         <?= $form->field($model, BooksForm::FIELD_AUTHOR_ID)
             ->dropDownList(ArrayHelper::map(Authors::find()->all(),  Authors::FIELD_ID, Authors::FULLNAME)) ?>

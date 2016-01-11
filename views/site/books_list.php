@@ -87,11 +87,11 @@ echo '<div class="alert alert-' . $key . '">' . $message . '</div>';
             'format' => 'raw',
             'value' => function ($model) {
             /* @var $model Books */
-                return Html::a(Html::img($model->preview,[
+                return Html::a(Html::img('/images/preview_' . $model->preview,[
                 'data-src' => 'holder.js/120x120',
 	            'class' => "img-responsive",
                 'style' => 'width: 120px'
-                ]), $model->preview, ['class' => 'image-link']);
+                ]), '/images/' . $model->preview, ['class' => 'image-link']);
             }
         ],
         [
