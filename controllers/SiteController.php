@@ -69,7 +69,6 @@ class SiteController extends Controller {
 
     public function actionLogout() {
         Yii::$app->user->logout();
-
         return $this->goHome();
     }
 
@@ -93,10 +92,18 @@ class SiteController extends Controller {
         $searchModel = new BooksSearch();
 		if ($searchModel->load(Yii::$app->request->post())) {
             $searchModel->validate();
+            Yii::$app->session->set('searchForm', Yii::$app->request->post());
         };
+
+        if (Yii::$app->session->has('searchForm')) {
+            $searchModel->load(Yii::$app->session->get('searchForm'));
+        }
 
         $books = new ActiveDataProvider([
 			'query' => $searchModel->search(),
+            'pagination' => [
+				'pageSize' => 20,
+			],
             'sort' =>[
                 'attributes' => [
                     BooksSearch::FIELD_ID => [
